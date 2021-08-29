@@ -5,10 +5,7 @@ import traceback
 from typing import Callable, Union
 
 
-VARIABLES = {
-    "MAX_INIT_BACKOFF_SECONDS": 806400.0,
-    "MAX_SLEEP_TIME": 2563488.0
-}
+VARIABLES = {"MAX_INIT_BACKOFF_SECONDS": 806400.0, "MAX_SLEEP_TIME": 2563488.0}
 
 
 class MaxRetriesExceeded(Exception):
@@ -41,7 +38,7 @@ class ExponentialBackoff(object):
 
         This is only really useful if you want to re-start the backoff, without making a new object."""
         self.tries = 0
-    
+
     def next_sleep_time(self) -> float:
         """
         Calculates how long the next sleep call will last.
@@ -78,8 +75,9 @@ class ExponentialBackoff(object):
         return self.tries
 
 
-def retry_with_backoff(max_retries: int = 10, backoff_seconds: Union[int, float] = 1.0, *,
-                       exception_handler: Callable = None) -> Callable:
+def retry_with_backoff(
+    max_retries: int = 10, backoff_seconds: Union[int, float] = 1.0, *, exception_handler: Callable = None
+) -> Callable:
     """
     Attach a decorator to a function that will retry a function up to N times with exponential backoff until it succeeds
 
@@ -88,6 +86,7 @@ def retry_with_backoff(max_retries: int = 10, backoff_seconds: Union[int, float]
     :param exception_handler: A function that will take one argument, type Exception, that is called on error.
     :return: Function (decorator)
     """
+
     def _default_handler(exception: Exception) -> None:
         traceback.print_exception(type(exception), exception, exception.__traceback__)
 
@@ -121,5 +120,7 @@ def retry_with_backoff(max_retries: int = 10, backoff_seconds: Union[int, float]
                     return function(*args, **kwargs)
                 except Exception as e:
                     exception_handler(e)  # If this function errors, then we quit the loop.
+
         return _wrapper
+
     return wrapper
